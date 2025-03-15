@@ -4,7 +4,7 @@ import { OfferListItem } from "../modules/OfferCard";
 import { EditCustomRequest } from "../ui/Modals/EditCustomRequest";
 
 export default function OfferTable() {
-    const [isModalOpen, setIsModalOpen] = useState(true);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const ordinalData = {
         collectionName: "Quantum Cats",

@@ -1,11 +1,7 @@
 import { FC } from 'react';
 import { cn } from "@/lib/utils";
+import { PriceTagProps } from '@/types';
 
-interface PriceTagProps {
-  label: string;
-  value: string;
-  className?: string;
-}
 
 const PriceTag: FC<PriceTagProps> = ({ label, value, className }) => {
   return (

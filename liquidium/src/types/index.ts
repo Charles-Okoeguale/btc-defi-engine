@@ -5,18 +5,6 @@ export interface PortfolioValueCardProps {
     className?: string;
 }
 
-export interface OrdinalCardProps {
-    collectionName: string;
-    name: string;
-    id: string;
-    number: string;
-    imageUrl: string;
-    floorPrice?: number;
-    currentPrice?: number;
-    className?: string;
-    onCreateOffer?: () => void;
-}
-
 export interface PriceTagProps {
     label: string;
     value: string;
@@ -36,16 +24,39 @@ export interface OfferListItemProps {
     className?: string;
 }
 
+export interface Ordinal {
+  inscription_name: string;
+  inscription_id: string;
+  inscription_number: number;
+  slug: string;
+  collection_name: string;
+  content_url: string;
+  render_url: string | null;
+  last_sale_price: number;
+  delegate?: {
+    render_url: string | null;
+    content_url: string;
+  };
+}
+
+export interface OrdinalCardProps {
+  ordinal: Ordinal;
+  floorPrice?: number; 
+  className?: string;
+  onCreateOffer: (ordinal: Ordinal) => void;
+}
+
 export interface CreateOfferModalProps {
-    isOpen: boolean;
-    onOpenChange: (open: boolean) => void;
-    ordinalData: {
-      collectionName: string;
-      name: string;
-      id: string;
-      floorPrice: string;
-    };
-    onSubmit: (offerData: { amount: string }) => void;
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  ordinalData: {
+    collectionName: string;
+    name: string;
+    id: string;
+    floorPrice: string;
+  };
+  onSubmit: (offerData: { amount: string }) => void;
+  onClose: () => void;
 }
 
 export interface AdvancedInputWithLabelProps {
@@ -60,17 +71,6 @@ export interface AdvancedInputWithLabelProps {
     inputClassName?: string;
     labelClassName?: string;
 }
-
-export interface Ordinal {
-    id: string;
-    inscription_id: string;
-    inscription_name: string;
-    slug: string;
-    collection_name: string;
-    render_url: string;
-    content_url: string;
-    last_sale_price: number;
-  }
   
   export interface WalletResponse {
     ordinals: Ordinal[];

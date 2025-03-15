@@ -4,19 +4,23 @@ import path from 'path';
 
 export async function GET() {
   try {
-    // Import mock data
+    
     const supportedCollections = JSON.parse(
       fs.readFileSync(path.join(process.cwd(), 'src/data/mock/supported_ordinal_collections.json'), 'utf8')
     );
 
-    // Transform the data to match your schema format if needed
-    const formattedCollections = supportedCollections.map((collection: any) => ({
-      id: collection.id || collection.slug,
-      name: collection.name,
-      slug: collection.slug,
-      floorPrice: collection.floor_price,
-      isSupported: true
-    }));
+    const formattedCollections = supportedCollections.map((collection: any) => {
+      // Generate a random floor price between 0.0005 and 0.002 BTC
+      const randomFloorPrice = (Math.random() * (0.002 - 0.0005) + 0.0005).toFixed(8);
+      
+      return {
+        id: collection.id || collection.slug,
+        name: collection.name,
+        slug: collection.slug,
+        floorPrice: parseFloat(randomFloorPrice),
+        isSupported: true
+      };
+    });
     
     return NextResponse.json(formattedCollections);
   } catch (error) {
