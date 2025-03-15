@@ -1,0 +1,59 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://postgres:postgres@localhost:5432/liquidium"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  address   String   @unique // Bitcoin wallet address
+  offers    Offer[]
+}
+
+model Collection {
+  id          String     @id @default(cuid())
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  slug        String     @unique
+  name        String
+  floorPrice  Float
+  isSupported Boolean    @default(true)
+  ordinals    Ordinal[]
+}
+
+model Ordinal {
+  id           String     @id @default(cuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  inscriptionId String    @unique
+  number       String
+  name         String?
+  collection   Collection @relation(fields: [collectionId], references: [id])
+  collectionId String
+  offers       Offer[]
+}
+
+model Offer {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  amount     Float
+  term       Int      // in days
+  interest   Float    // percentage
+  status     String   @default("PENDING") // PENDING, ACCEPTED, REJECTED, COMPLETED
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String
+  ordinal    Ordinal  @relation(fields: [ordinalId], references: [id])
+  ordinalId  String
+}
