@@ -1,98 +1,168 @@
-import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { NextRequest, NextResponse } from 'next/server';
+import { PrismaClient } from '@prisma/client';
+import { z } from 'zod';
 
-// Path to mock offers data file
-const OFFERS_FILE_PATH = path.join(process.cwd(), 'data/mock/offers.json');
+const prisma = new PrismaClient();
 
-// Get offers from file
-function getOffers() {
-  if (!fs.existsSync(OFFERS_FILE_PATH)) {
-    return [];
-  }
-  const offersData = fs.readFileSync(OFFERS_FILE_PATH, 'utf8');
-  return JSON.parse(offersData);
-}
+// Validation schema for offer updates
+const updateOfferSchema = z.object({
+  amount: z.number().positive().min(0.0001, "Offer amount must be at least 0.0001 BTC").optional(),
+  term: z.number().int().positive().min(1, "Term must be at least 1 day").optional(),
+  interest: z.number().positive().max(100, "Interest rate cannot exceed 100%").optional(),
+});
 
-// Save offers to file
-function saveOffers(offers: any[]) {
-  // Ensure directory exists
-  if (!fs.existsSync(path.dirname(OFFERS_FILE_PATH))) {
-    fs.mkdirSync(path.dirname(OFFERS_FILE_PATH), { recursive: true });
-  }
-  fs.writeFileSync(OFFERS_FILE_PATH, JSON.stringify(offers, null, 2));
-}
-
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const id = params.id;
-    const offers = getOffers();
-    const offer = offers.find((o: any) => o.id === id);
-    
-    if (!offer) {
-      return NextResponse.json({ message: 'Offer not found' }, { status: 404 });
-    }
-    
-    return NextResponse.json(offer);
-  } catch (error) {
-    console.error('Request error', error);
-    return NextResponse.json({ error: 'Error fetching offer' }, { status: 500 });
-  }
-}
-
-export async function PUT(
-  request: Request,
+// Update an offer
+export async function PATCH(
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const id = params.id;
     const body = await request.json();
-    const offers = getOffers();
-    const offerIndex = offers.findIndex((o: any) => o.id === id);
     
-    if (offerIndex === -1) {
-      return NextResponse.json({ message: 'Offer not found' }, { status: 404 });
+    // Validate request data
+    const validationResult = updateOfferSchema.safeParse(body);
+    if (!validationResult.success) {
+      return NextResponse.json(
+        { error: "Validation error", details: validationResult.error.format() },
+        { status: 400 }
+      );
     }
     
-    // Update offer
-    offers[offerIndex] = {
-      ...offers[offerIndex],
-      ...body,
-      updatedAt: new Date().toISOString()
-    };
+    const { amount, term, interest } = validationResult.data;
     
-    saveOffers(offers);
+    // Get the existing offer
+    const existingOffer = await prisma.offer.findUnique({
+      where: { id },
+      include: {
+        ordinal: {
+          include: {
+            collection: true,
+          },
+        },
+      },
+    });
     
-    return NextResponse.json(offers[offerIndex]);
+    if (!existingOffer) {
+      return NextResponse.json(
+        { error: "Offer not found" },
+        { status: 404 }
+      );
+    }
+    
+    // Calculate new LTV if amount is being updated
+    let ltv = existingOffer.ltv;
+    if (amount) {
+      const floorPrice = existingOffer.ordinal.collection.floorPrice;
+      ltv = (amount / floorPrice) * 100;
+      
+      // Check if LTV exceeds 100%
+      if (ltv > 100) {
+        return NextResponse.json(
+          { error: "LTV cannot exceed 100%" },
+          { status: 400 }
+        );
+      }
+    }
+    
+    // Update the offer
+    const updatedOffer = await prisma.offer.update({
+      where: { id },
+      data: {
+        ...(amount && { amount }),
+        ...(term && { term }),
+        ...(interest && { interest }),
+        ...(amount && { ltv }),
+      },
+      include: {
+        ordinal: {
+          include: {
+            collection: true,
+          },
+        },
+      },
+    });
+    
+    return NextResponse.json(updatedOffer);
   } catch (error) {
-    console.error('Request error', error);
-    return NextResponse.json({ error: 'Error updating offer' }, { status: 500 });
+    console.error("Error updating offer:", error);
+    return NextResponse.json(
+      { error: "Failed to update offer" },
+      { status: 500 }
+    );
   }
 }
 
+// Delete an offer
 export async function DELETE(
-  request: Request,
+  request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
     const id = params.id;
-    const offers = getOffers();
-    const offerIndex = offers.findIndex((o: any) => o.id === id);
     
-    if (offerIndex === -1) {
-      return NextResponse.json({ message: 'Offer not found' }, { status: 404 });
+    // Check if offer exists
+    const offer = await prisma.offer.findUnique({
+      where: { id },
+    });
+    
+    if (!offer) {
+      return NextResponse.json(
+        { error: "Offer not found" },
+        { status: 404 }
+      );
     }
     
-    // Remove offer
-    const removedOffer = offers.splice(offerIndex, 1)[0];
-    saveOffers(offers);
+    // Update the offer status to DELETED instead of actually deleting it
+    await prisma.offer.update({
+      where: { id },
+      data: {
+        status: "DELETED",
+      },
+    });
     
-    return NextResponse.json({ message: 'Offer deleted successfully' });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Request error', error);
-    return NextResponse.json({ error: 'Error deleting offer' }, { status: 500 });
+    console.error("Error deleting offer:", error);
+    return NextResponse.json(
+      { error: "Failed to delete offer" },
+      { status: 500 }
+    );
+  }
+}
+
+// Get a specific offer
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = params.id;
+    
+    const offer = await prisma.offer.findUnique({
+      where: { id },
+      include: {
+        ordinal: {
+          include: {
+            collection: true,
+          },
+        },
+      },
+    });
+    
+    if (!offer) {
+      return NextResponse.json(
+        { error: "Offer not found" },
+        { status: 404 }
+      );
+    }
+    
+    return NextResponse.json(offer);
+  } catch (error) {
+    console.error("Error fetching offer:", error);
+    return NextResponse.json(
+      { error: "Failed to fetch offer" },
+      { status: 500 }
+    );
   }
 }

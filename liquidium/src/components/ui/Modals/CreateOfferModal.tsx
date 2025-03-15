@@ -98,7 +98,7 @@ export const CreateOfferModal: FC<CreateOfferModalProps> = ({
                         <p className='text-[grey] text-[12px] mt-8'>$194723.76</p>
                     </div>
 
-                    <PriceTag label="Best" value={0.00391} className='mt-8'/>
+                    <PriceTag label="Best" value={'0.00391'} className='mt-8'/>
                 </div>
 
                 <div className='flex flex-row items-center w-full justify-between mt-4'>
