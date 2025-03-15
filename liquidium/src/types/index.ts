@@ -59,4 +59,54 @@ export interface AdvancedInputWithLabelProps {
     className?: string;
     inputClassName?: string;
     labelClassName?: string;
+}
+
+export interface Ordinal {
+    id: string;
+    inscription_id: string;
+    inscription_name: string;
+    slug: string;
+    collection_name: string;
+    render_url: string;
+    content_url: string;
+    last_sale_price: number;
+  }
+  
+  export interface WalletResponse {
+    ordinals: Ordinal[];
+    stats: {
+      totalPortfolioValue: number;
+      availableLiquidity: number;
+    };
+  }
+  
+  export interface Collection {
+    id: string;
+    name: string;
+    slug: string;
+    floorPrice: number;
+    isSupported: boolean;
+  }
+  
+  export interface Offer {
+    id: string;
+    createdAt: string;
+    updatedAt: string;
+    amount: number;
+    term: number;
+    interest: number;
+    status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED';
+    ordinalId: string;
+    userId: string;
+    floorPrice?: number;
+    ltv?: number;
+    ordinalName?: string;
+    collectionName?: string;
+  }
+  
+  export interface CreateOfferData {
+    amount: number;
+    term: number;
+    interest: number;
+    ordinalId: string;
   }
