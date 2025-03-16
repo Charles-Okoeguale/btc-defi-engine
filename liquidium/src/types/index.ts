@@ -29,6 +29,7 @@ export interface CreateOfferModalProps {
   onOpenChange: (open: boolean) => void;
   ordinalData: any; 
   onSubmit: (data: any) => void; 
+  onClose?: () => void; 
 }
 
 export interface Ordinal {

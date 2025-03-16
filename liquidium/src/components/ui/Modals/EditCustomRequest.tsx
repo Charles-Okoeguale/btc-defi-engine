@@ -222,7 +222,7 @@ export const EditCustomRequest: FC<CreateOfferModalProps> = ({
                         disabled={!isFormValid || isSubmitting}
                         className="bg-[#FF5700] hover:bg-[#FF5700]/90 text-[12px] font-medium text-white h-[2.5em] w-[10em]"
                     >
-                        {isSubmitting ? "Updating..." : "Update request"}
+                        {isSubmitting ? "Updating..." : "Edit request"}
                     </Button>
                 </div>
 
