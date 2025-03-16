@@ -44,8 +44,6 @@ export const CreateOfferModal: FC<CreateOfferModalProps> = ({
       
     const { apr, apy } = calculateRates(interestValue, termValue);
 
-
-
   const isFormValid = amountValue !== null && termValue !== null && interestValue !== null;
 
   const handleSubmit = async () => {
@@ -61,7 +59,7 @@ export const CreateOfferModal: FC<CreateOfferModalProps> = ({
           ordinalId: ordinalData.inscription_id,
           userId: MOCK_USER_ID 
         });
-        
+        resetForm();
         onOpenChange(false);
       } catch (err) {
         setError("Failed to create request. Please try again.");
@@ -71,6 +69,13 @@ export const CreateOfferModal: FC<CreateOfferModalProps> = ({
       }
     }
   };
+
+  const resetForm = () => {
+    setAmount('0');
+    setTerm('0');
+    setInterest('0');
+  };
+
   console.log(ordinalData)
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>

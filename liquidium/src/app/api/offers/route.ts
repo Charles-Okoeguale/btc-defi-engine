@@ -183,7 +183,8 @@ export async function GET(request: NextRequest) {
         createdAt: 'desc',
       },
     });
-    
+
+    // No need to transform - return the full structure
     return NextResponse.json(offers);
   } catch (error) {
     console.error("Error fetching offers:", error);

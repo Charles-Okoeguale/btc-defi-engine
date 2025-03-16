@@ -22,9 +22,9 @@ export const getSupportedCollections = async (): Promise<Collection[]> => {
 };
 
 // Offers API
-export const getOffers = async (): Promise<Offer[]> => {
-  const response = await api.get<Offer[]>('/offers');
-  return response.data;
+export const getOffers = async (userId: string): Promise<Offer[]> => {
+    const response = await api.get<Offer[]>(`/offers?userId=${userId}`);
+    return response.data;
 };
 
 export const createOffer = async (offerData: CreateOfferData): Promise<Offer> => {

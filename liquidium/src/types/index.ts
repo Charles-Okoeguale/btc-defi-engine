@@ -24,6 +24,13 @@ export interface OfferListItemProps {
     className?: string;
 }
 
+export interface CreateOfferModalProps {
+  isOpen: boolean;
+  onOpenChange: (open: boolean) => void;
+  ordinalData: any; 
+  onSubmit: (data: any) => void; 
+}
+
 export interface Ordinal {
   inscription_name: string;
   inscription_id: string;
@@ -45,14 +52,6 @@ export interface OrdinalCardProps {
   floorPrice?: number; 
   className?: string;
   onCreateOffer: (ordinal: Ordinal) => void;
-}
-
-export interface CreateOfferModalProps {
-  isOpen: boolean;
-  onOpenChange: (open: boolean) => void;
-  ordinalData: Ordinal;
-  onSubmit: (offerData: OfferData) => Promise<void>;
-  onClose: () => void;
 }
 
 export interface AdvancedInputWithLabelProps {
@@ -91,13 +90,23 @@ export interface AdvancedInputWithLabelProps {
     amount: number;
     term: number;
     interest: number;
-    status: 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'COMPLETED';
-    ordinalId: string;
+    ltv: number;
+    status: 'ACTIVE' | 'PENDING' | 'REJECTED' | 'COMPLETED';
     userId: string;
-    floorPrice?: number;
-    ltv?: number;
-    ordinalName?: string;
-    collectionName?: string;
+    ordinalId: string;
+    ordinal: {
+      id: string;
+      inscriptionId: string;
+      inscriptionNumber: number;
+      name: string;
+      contentUrl: string;
+      renderUrl: string;
+      lastSalePrice: number;
+      collection: {
+        name: string;
+        floorPrice: number;
+      }
+    }
   }
   
   export interface CreateOfferData {
