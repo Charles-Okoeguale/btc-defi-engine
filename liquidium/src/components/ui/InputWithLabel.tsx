@@ -18,17 +18,27 @@ export const AdvancedInputWithLabel: FC<AdvancedInputWithLabelProps> = ({
   return (
     <div className={cn("relative w-[120px]", className)}> 
         <Input
-            value={value}
-            onChange={(e) => onChange?.(e.target.value)}
-            placeholder={placeholder}
-            disabled={disabled}
-            className={cn(
+          value={value}
+          onChange={(e) => {
+            const inputValue = e.target.value;
+            const numericRegex = /^[0-9]*\.?[0-9]*$/;
+            
+            if (inputValue === '' || numericRegex.test(inputValue)) {
+              onChange?.(inputValue);
+            }
+          }}
+          placeholder={placeholder}
+          type="number"
+          disabled={disabled}
+          step="any" 
+          min="0" 
+          className={cn(
             "pr-[45px]", 
             "bg-[#141414] text-white border-[#2B2B2B]",
             error && "border-red-500",
             disabled && "opacity-50",
             inputClassName
-            )}
+          )}
         />
         <div
             onClick={onLabelClick}

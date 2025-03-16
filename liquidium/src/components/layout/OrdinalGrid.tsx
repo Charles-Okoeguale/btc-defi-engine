@@ -1,10 +1,13 @@
 "use client"
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { getWalletData, getSupportedCollections } from '@/services/api';
-import { CreateOfferModal } from '../ui/Modals/CreateOfferModal';
+import { getWalletData, getSupportedCollections, createOffer } from '@/services/api';
 import OrdinalCard from '../modules/OrdinalCard';
 import { Ordinal } from '@/types';
+import CreateOfferModal from '../ui/Modals/CreateOfferModal';
+import { queryClient } from '@/lib/react-query';
+import { toast } from "sonner"
+import { handleError } from '@/lib/error-handler';
 
 const OrdinalsGrid: React.FC = () => {
   const [selectedOrdinal, setSelectedOrdinal] = useState<Ordinal | null>(null);
@@ -31,17 +34,14 @@ const OrdinalsGrid: React.FC = () => {
   // Filter ordinals to show only those from supported collections
   const supportedOrdinals = React.useMemo(() => {
     if (!walletData?.ordinals || !collectionsData) return [];
-    
     // Create a set of supported collection slugs for faster lookup
     const supportedSlugs = new Set(collectionsData.map((c: any) => c.slug));
-    
     // Filter ordinals to only include those from supported collections
     return walletData.ordinals.filter((ordinal: Ordinal) => 
       supportedSlugs.has(ordinal.slug)
     );
   }, [walletData, collectionsData]);
 
-  console.log("Supported ordinals:", supportedOrdinals);
 
   const handleCreateOffer = (ordinal: Ordinal) => {
     setSelectedOrdinal(ordinal);
@@ -87,14 +87,17 @@ const OrdinalsGrid: React.FC = () => {
         <CreateOfferModal
           isOpen={isModalOpen}
           onOpenChange={setIsModalOpen}
-          ordinalData={{
-            collectionName: selectedOrdinal.collection_name,
-            name: selectedOrdinal.inscription_name,
-            id: selectedOrdinal.inscription_id,
-            floorPrice: (floorPrices[selectedOrdinal.slug] || 0.00065).toString()
+          ordinalData={selectedOrdinal}
+          onSubmit={async (offerData) => {
+            try {
+              await createOffer(offerData);
+              toast.success("Offer created successfully!");
+              queryClient.invalidateQueries('offers');
+            } catch (error) {
+              handleError(error, "creating offer");
+            }
           }}
-          onSubmit={(offerData) => console.log('Offer submitted:', offerData)}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => setIsModalOpen(false)} 
         />
       )}
     </>

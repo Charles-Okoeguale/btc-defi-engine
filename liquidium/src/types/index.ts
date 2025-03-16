@@ -33,6 +33,7 @@ export interface Ordinal {
   content_url: string;
   render_url: string | null;
   last_sale_price: number;
+  owner_wallet_addr: string;
   delegate?: {
     render_url: string | null;
     content_url: string;
@@ -49,13 +50,8 @@ export interface OrdinalCardProps {
 export interface CreateOfferModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  ordinalData: {
-    collectionName: string;
-    name: string;
-    id: string;
-    floorPrice: string;
-  };
-  onSubmit: (offerData: { amount: string }) => void;
+  ordinalData: Ordinal;
+  onSubmit: (offerData: OfferData) => Promise<void>;
   onClose: () => void;
 }
 
@@ -109,4 +105,12 @@ export interface AdvancedInputWithLabelProps {
     term: number;
     interest: number;
     ordinalId: string;
+  }
+
+  export interface OfferData {
+    amount: number;
+    term: number;
+    interest: number;
+    ordinalId: string;
+    userId: string;
   }

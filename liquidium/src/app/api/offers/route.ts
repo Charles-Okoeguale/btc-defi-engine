@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import { z } from 'zod';
+import { Ordinal } from '@/types';
 
 const prisma = new PrismaClient();
 
@@ -13,10 +14,33 @@ const createOfferSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
 });
 
+async function getOrdinalDetails(inscriptionId: string): Promise<Ordinal | undefined> {
+  try {
+    const imported = await import('@/data/mock/your_owned_ordinals.json').then(module => module.default);
+    let mockOrdinalsData: any[] = [];
+
+    if (Array.isArray(imported)) {
+      mockOrdinalsData = imported;
+    } else if (Array.isArray(imported.data)) {
+      mockOrdinalsData = imported.data;
+    } else {
+      console.error("Mock data is not an array or does not contain a data property array.");
+      return undefined;
+    }
+    
+    const found = mockOrdinalsData.find(
+      ordinal => ordinal.inscription_id === inscriptionId
+    );
+    return found;
+  } catch (error) {
+    console.error("Error fetching ordinal details:", error);
+    return undefined;
+  }
+}
+  
 // create the offer
 export async function POST(request: NextRequest) {
   try {
-    // Parse request body
     const body = await request.json();
     
     // Validate request data
@@ -30,17 +54,55 @@ export async function POST(request: NextRequest) {
     
     const { amount, term, interest, ordinalId, userId } = validationResult.data;
     
-    // Get the ordinal to calculate LTV
-    const ordinal = await prisma.ordinal.findUnique({
-      where: { id: ordinalId },
+    // Find ordinal by inscriptionId
+    let ordinal = await prisma.ordinal.findUnique({
+      where: { inscriptionId: ordinalId },
       include: { collection: true },
     });
     
+    // If ordinal doesn't exist, create it
     if (!ordinal) {
-      return NextResponse.json(
-        { error: "Ordinal not found" },
-        { status: 404 }
-      );
+      const ordinalDetails = await getOrdinalDetails(ordinalId);
+      
+      if (!ordinalDetails) {
+        return NextResponse.json(
+          { error: "Ordinal not found in walletss" },
+          { status: 404 }
+        );
+      }
+      
+      // Find or create the collection based on the slug
+      const collectionSlug = ordinalDetails.slug || ordinalDetails.collection_name.toLowerCase().replace(/\s+/g, '-');
+      
+      let collection = await prisma.collection.findUnique({
+        where: { slug: collectionSlug }
+      });
+      
+      if (!collection) {
+        collection = await prisma.collection.create({
+          data: {
+            name: ordinalDetails.collection_name,
+            slug: collectionSlug,
+            floorPrice: ordinalDetails.last_sale_price || 1000000,
+            isSupported: true
+          }
+        });
+      }
+      
+      // Create the ordinal with correct field mapping
+      ordinal = await prisma.ordinal.create({
+        data: {
+          inscriptionId: ordinalDetails.inscription_id,
+          inscriptionNumber: ordinalDetails.inscription_number || 0,
+          name: ordinalDetails.inscription_name || null,
+          contentUrl: ordinalDetails.content_url || null,
+          renderUrl: ordinalDetails.render_url || null,
+          lastSalePrice: ordinalDetails.last_sale_price || null,
+          ownerWalletAddr: ordinalDetails.owner_wallet_addr || "unknown",
+          collectionId: collection.id
+        },
+        include: { collection: true }
+      });
     }
     
     // Calculate LTV (Loan to Value ratio)
@@ -58,12 +120,12 @@ export async function POST(request: NextRequest) {
     // Create the offer
     const offer = await prisma.offer.create({
       data: {
-        amount,
-        term,
-        interest,
+        amount: amount,
+        term: term,
+        interest: interest,
         ltv,
         status: "ACTIVE",
-        ordinal: { connect: { id: ordinalId } },
+        ordinal: { connect: { id: ordinal.id } },
         user: { connect: { id: userId } },
       },
       include: {
@@ -78,10 +140,17 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(offer, { status: 201 });
   } catch (error) {
     console.error("Error creating offer:", error);
-    return NextResponse.json(
-      { error: "Failed to create offer" },
-      { status: 500 }
-    );
+    if (error instanceof Error) {
+      return NextResponse.json(
+        { error: "Failed to create offer", details: error.message },
+        { status: 500 }
+      );
+    } else {
+      return NextResponse.json(
+        { error: "Failed to create offer", details: "Unknown error" },
+        { status: 500 }
+      );
+    }
   }
 }
 
