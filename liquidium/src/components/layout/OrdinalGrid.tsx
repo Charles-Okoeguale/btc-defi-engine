@@ -8,15 +8,21 @@ import CreateOfferModal from '../ui/Modals/CreateOfferModal';
 import { queryClient } from '@/lib/react-query';
 import { toast } from "sonner"
 import { handleError } from '@/lib/error-handler';
+import { Search } from 'lucide-react'
+import { Button } from '../ui/button';
+import { OrdinalsBottomSheet } from '../ui/Modals/OrdinalsBottomSheet';
 
 const OrdinalsGrid: React.FC = () => {
   const [selectedOrdinal, setSelectedOrdinal] = useState<Ordinal | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
 
   // Fetch wallet data (ordinals)
   const { data: walletData, isLoading: isLoadingWallet, error: walletError } = 
     useQuery('walletData', getWalletData);
+
+    console.log(walletData, 'wall')
 
   // Fetch collections data for floor prices
   const { data: collectionsData, isLoading: isLoadingCollections } = 
@@ -32,8 +38,6 @@ const OrdinalsGrid: React.FC = () => {
     }, {});
   }, [collectionsData]);
 
-    // Filter ordinals to show only those from supported collections
-   // Create a set of supported collection slugs for faster lookup
    // Filter ordinals to only include those from supported collections
   const supportedOrdinals = React.useMemo(() => {
     if (!walletData?.ordinals || !collectionsData) return [];
@@ -87,20 +91,21 @@ const OrdinalsGrid: React.FC = () => {
 
 
   return (
-    <>
-      <div className="mb-4">
+    <div className='xl:flex xl:flex-col xl:items-center xl:gap-2'>
+      <div className="xl:mb-4 xl:relative">
         <input
           type="text"
-          placeholder="Search ordinals..."
+          placeholder="Search inscription"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full p-2 bg-[#1E1E1E] border border-[#2B2B2B] rounded-lg text-white"
+          className="xl:w-[336px] xl:h-[36px] xl:p-2 xl:pr-10 xl:bg-[#111111] xl:border xl:border-[#2B2B2B] xl:rounded-lg xl:text-white"
         />
+        <Search className="xl:absolute xl:right-3 xl:top-1/2 xl:-translate-y-1/2 xl:w-4 xl:h-4 xl:text-gray-400" />
       </div>
 
-      <div className="flex flex-row overflow-x-auto gap-2 pb-2">
+      <div className="xl:flex xl:flex-row xl:gap-5 xl:p-3 xl:border xl:border-[#2B2B2B] xl:w-full xl:h-[358px] xl:rounded-[25px] xl:items-center">
         {filteredOrdinals.slice(0, 6).map((ordinal: Ordinal, index: number) => (
-          <div className="flex-shrink-0 w-64" key={index}>
+          <div key={index}>
             <OrdinalCard
               key={ordinal.inscription_id}
               ordinal={ordinal}
@@ -110,6 +115,7 @@ const OrdinalsGrid: React.FC = () => {
           </div>
         ))}
       </div>
+      <Button className='text-[12px]' onClick={() => setIsBottomSheetOpen(true)}>View all</Button>
 
       {selectedOrdinal && (
         <CreateOfferModal
@@ -128,7 +134,15 @@ const OrdinalsGrid: React.FC = () => {
           onClose={() => setIsModalOpen(false)} 
         />
       )}
-    </>
+
+      <OrdinalsBottomSheet
+        isOpen={isBottomSheetOpen}
+        onOpenChange={setIsBottomSheetOpen}
+        ordinals={filteredOrdinals}
+        floorPrices={floorPrices}
+        onCreateOffer={handleCreateOffer}
+      />
+    </div>
   );
 };
 

@@ -159,14 +159,25 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get('userId');
-    
+    const page = parseInt(searchParams.get('page') || '1');
+    const limit = parseInt(searchParams.get('limit') || '16');
+
     if (!userId) {
       return NextResponse.json(
         { error: "User ID is required" },
         { status: 400 }
       );
     }
-    
+
+    // Get total count for pagination
+    const totalItems = await prisma.offer.count({
+      where: {
+        userId,
+        status: "ACTIVE",
+      }
+    });
+
+    // Get paginated offers
     const offers = await prisma.offer.findMany({
       where: {
         userId,
@@ -182,10 +193,20 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: 'desc',
       },
+      skip: (page - 1) * limit,
+      take: limit,
     });
 
-    // No need to transform - return the full structure
-    return NextResponse.json(offers);
+    return NextResponse.json({
+      offers,
+      pagination: {
+        currentPage: page,
+        totalPages: Math.ceil(totalItems / limit),
+        totalItems,
+        itemsPerPage: limit
+      }
+    });
+
   } catch (error) {
     console.error("Error fetching offers:", error);
     return NextResponse.json(

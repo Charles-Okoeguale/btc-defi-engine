@@ -17,14 +17,14 @@ const PortfolioValueCard: FC<PortfolioValueCardProps> = ({
 
   return (
     <div className={cn(
-      "flex flex-col w-[733.5px] h-[100px] bg-[#141414] py-4 px-4 gap-2 rounded-[20px]",
+      "xl:flex xl:flex-col xl:w-[733.5px] xl:h-[100px] xl:bg-[#141414] xl:py-4 xl:px-4 xl:gap-2 xl:rounded-[20px]",
       className
     )}>
-      <p className="text-white text-xs">{title}</p>
-      <div className="flex flex-row gap-2 items-center">
-        <h1 className="text-white font-bold text-[32px]">₿{formattedBtc}</h1>
-        <div className="text-white border border-[#3E3E3E] rounded-[20px] flex items-center justify-center w-[4.375em] h-[1.625em]">
-          <p className="text-[14px]">${formattedUsd}</p>
+      <p className="xl:text-white xl:text-xs">{title}</p>
+      <div className="xl:flex xl:flex-row xl:gap-2 xl:items-center">
+        <h1 className="xl:text-white xl:font-bold xl:text-[32px]">₿{formattedBtc}</h1>
+        <div className="xl:text-white xl:border xl:border-[#3E3E3E] xl:rounded-[20px] xl:flex xl:items-center xl:justify-center xl:w-[4.375em] xl:h-[1.625em]">
+          <p className="xl:text-[14px]">${formattedUsd}</p>
         </div>
       </div>
     </div>

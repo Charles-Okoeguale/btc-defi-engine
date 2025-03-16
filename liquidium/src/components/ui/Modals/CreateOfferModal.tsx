@@ -11,7 +11,7 @@ import { CreateOfferModalProps } from '@/types';
 import Image from 'next/image';
 import { AdvancedInputWithLabel } from '../InputWithLabel';
 import PriceTag from '@/components/modules/PriceTag';
-import { BTC_PRICE_USD, MOCK_USER_ID } from "@/constants";
+import { BTC_PRICE_USD, MOCK_USER_BALANCE, MOCK_USER_ID } from "@/constants";
 import { calculateInterest, calculateRates } from '@/lib/financial';
 
 export const CreateOfferModal: FC<CreateOfferModalProps> = ({
@@ -23,7 +23,6 @@ export const CreateOfferModal: FC<CreateOfferModalProps> = ({
     const [amount, setAmount] = useState<string>('0');
     const [term, setTerm] = useState<string>('0');
     const [interest, setInterest] = useState<string>('0');
-    const [userBalance, setUserBalance] = useState<number>(0.00391);
     const [btcPrice, setBtcPrice] = useState<number>(BTC_PRICE_USD);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -88,7 +87,7 @@ export const CreateOfferModal: FC<CreateOfferModalProps> = ({
                 <div className="relative w-[100px] h-[70px]">
                   <div className="absolute inset-0 rounded-[10px] overflow-hidden">
                     <Image
-                      src={ordinalData.render_url ?? ''}
+                      src={ordinalData.render_url ?? null}
                       alt="Profile"
                       fill
                       className="object-cover"
@@ -163,7 +162,7 @@ export const CreateOfferModal: FC<CreateOfferModalProps> = ({
 
               <PriceTag 
                 label="Bal" 
-                value={`₿ ${userBalance.toFixed(5)}`} 
+                value={`₿ ${MOCK_USER_BALANCE.toFixed(5)}`} 
                 className='mt-8'
               />
             </div>

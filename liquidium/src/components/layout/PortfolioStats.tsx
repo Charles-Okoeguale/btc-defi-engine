@@ -1,23 +1,11 @@
 "use client"
 import { useQuery } from 'react-query';
 import { getWalletData } from '@/services/api';
-import { useState, useEffect } from 'react';
 import PortfolioValueCard from '../modules/PortfolioValueCard';
-
-const BTC_TO_USD_RATE = 96000;
+import { BTC_PRICE_USD } from '@/constants';
 
 export default function PortfolioStats() {
   const { data, isLoading, error } = useQuery('walletStats', getWalletData);
-  const [btcUsdRate, setBtcUsdRate] = useState(BTC_TO_USD_RATE);
-  
-
-//   useEffect(() => {
-//     // You could fetch the real rate from an API like CoinGecko
-//     // Example: 
-//     // fetch('https://api.coingecko.com/api/v3/simple/price?ids=bitcoin&vs_currencies=usd')
-//     //   .then(res => res.json())
-//     //   .then(data => setBtcUsdRate(data.bitcoin.usd));
-//   }, []);
   
   if (isLoading) return <div className="mt-12 flex flex-row gap-2">Loading portfolio stats...</div>;
   if (error) return <div className="mt-12 flex flex-row gap-2">Error loading portfolio stats</div>;
@@ -26,11 +14,11 @@ export default function PortfolioStats() {
   const availableLiquidity = data?.stats?.availableLiquidity || 0;
   
   // Convert BTC values to USD
-  const totalPortfolioValueUsd = totalPortfolioValue * btcUsdRate;
-  const availableLiquidityUsd = availableLiquidity * btcUsdRate;
+  const totalPortfolioValueUsd = totalPortfolioValue * BTC_PRICE_USD;
+  const availableLiquidityUsd = availableLiquidity * BTC_PRICE_USD;
   
   return (
-    <div className="mt-12 flex flex-row gap-2">
+    <div className="xl:mt-12 xl:flex xl:flex-row xl:gap-2 xl:mb-12">
       <PortfolioValueCard
         title="Total portfolio value"
         btcValue={totalPortfolioValue}

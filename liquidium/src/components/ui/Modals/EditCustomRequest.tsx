@@ -2,7 +2,7 @@ import { FC, useState } from 'react';
 import Image from 'next/image';
 import { Check, Info, ScanLine } from 'lucide-react';
 import { calculateInterest, calculateRates } from '@/lib/financial';
-import { BTC_PRICE_USD, MOCK_USER_ID } from '@/constants';
+import { BTC_PRICE_USD, MOCK_USER_BALANCE, MOCK_USER_ID } from '@/constants';
 import {
     Dialog,
     DialogContent,
@@ -18,8 +18,8 @@ import { CreateOfferModalProps } from '@/types';
 export const EditCustomRequest: FC<CreateOfferModalProps> = ({
   isOpen,
   onOpenChange,
-  onSubmit,
   ordinalData,
+  onSubmit
 }) => {
 
     if (!ordinalData || !ordinalData.ordinal) {
@@ -29,15 +29,13 @@ export const EditCustomRequest: FC<CreateOfferModalProps> = ({
     const [amount, setAmount] = useState<string>(ordinalData?.amount?.toString() || '0');
     const [term, setTerm] = useState<string>(ordinalData?.term?.toString() || '0');
     const [interest, setInterest] = useState<string>(ordinalData?.interest?.toString() || '0');
-    const [userBalance, setUserBalance] = useState<number>(0.00391);
-    const [btcPrice, setBtcPrice] = useState<number>(BTC_PRICE_USD);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const amountValue = amount ? parseFloat(amount) : null;
     const termValue = term ? parseInt(term) : null;
     const interestValue = interest ? parseFloat(interest) : null;
-    const amountUSD = amountValue !== null ? amountValue * btcPrice : null;
+    const amountUSD = amountValue !== null ? amountValue * BTC_PRICE_USD : null;
 
     const displayAmount = amount === '0' ? '' : amount;
     const displayTerm = term === '0' ? '' : term;
@@ -165,7 +163,7 @@ export const EditCustomRequest: FC<CreateOfferModalProps> = ({
 
                         <PriceTag 
                             label="Bal" 
-                            value={`₿ ${userBalance.toFixed(5)}`} 
+                            value={`₿ ${MOCK_USER_BALANCE.toFixed(5)}`} 
                             className='mt-8'
                         />
                     </div>

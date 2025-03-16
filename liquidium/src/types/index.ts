@@ -24,12 +24,36 @@ export interface OfferListItemProps {
     className?: string;
 }
 
+export interface GetOffersParams {
+  userId: string;
+  page: number;
+  limit: number;
+}
+
+export interface PaginatedResponse {
+  offers: Offer[];
+  pagination: {
+      currentPage: number;
+      totalPages: number;
+      totalItems: number;
+      itemsPerPage: number;
+  }
+}
+
 export interface CreateOfferModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   ordinalData: any; 
   onSubmit: (data: any) => void; 
   onClose?: () => void; 
+}
+
+export interface OrdinalsBottomSheetProps {
+  isOpen: boolean
+  onOpenChange: (open: boolean) => void
+  ordinals: Ordinal[]
+  floorPrices: Record<string, number>
+  onCreateOffer: (ordinal: Ordinal) => void
 }
 
 export interface Ordinal {

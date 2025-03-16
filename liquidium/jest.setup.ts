@@ -1,5 +1,28 @@
 import type { Config } from 'jest';
 import nextJest from 'next/jest';
+const { TextEncoder, TextDecoder } = require('util');
+import '@testing-library/jest-dom';
+
+// Set up window object
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
+// For jsdom environment
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'TextEncoder', {
+    writable: true,
+    value: TextEncoder
+  });
+  Object.defineProperty(window, 'TextDecoder', {
+    writable: true,
+    value: TextDecoder
+  });
+}
+
+// Reset mocks between tests
+beforeEach(() => {
+  jest.resetModules();
+});
 
 // Providing the path to your Next.js app which will enable loading next.config.js and .env files
 const createJestConfig = nextJest({

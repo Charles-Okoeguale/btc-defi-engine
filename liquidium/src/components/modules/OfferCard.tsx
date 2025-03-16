@@ -6,8 +6,6 @@ import { cn } from "@/lib/utils";
 import { OfferListItemProps } from '@/types';
 import PriceTag from './PriceTag';
 
-
-
 export const OfferListItem: FC<OfferListItemProps> = ({
   imageUrl,
   collectionName,
@@ -29,8 +27,8 @@ export const OfferListItem: FC<OfferListItemProps> = ({
       <div className="flex items-center gap-4">
         <div className="relative w-[60px] h-[60px] rounded-[96px] overflow-hidden flex-shrink-0">
           <Image
-            src={imageUrl}
-            alt={name}
+            src={imageUrl || "/liquid.jpg"}
+            alt={name || ""}
             fill
             className="object-cover"
           />

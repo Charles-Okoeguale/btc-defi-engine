@@ -1,4 +1,4 @@
-import { Collection, CreateOfferData, Offer, WalletResponse } from '@/types';
+import { Collection, CreateOfferData, Offer, PaginatedResponse, WalletResponse } from '@/types';
 import axios from 'axios';
 
 // Base API configuration
@@ -22,9 +22,9 @@ export const getSupportedCollections = async (): Promise<Collection[]> => {
 };
 
 // Offers API
-export const getOffers = async (userId: string): Promise<Offer[]> => {
-    const response = await api.get<Offer[]>(`/offers?userId=${userId}`);
-    return response.data;
+export const getOffers = async (userId: string, page: number = 1, limit: number = 4): Promise<PaginatedResponse> => {
+  const response = await api.get<PaginatedResponse>(`/offers?userId=${userId}&page=${page}&limit=${limit}`);
+  return response.data;
 };
 
 export const createOffer = async (offerData: CreateOfferData): Promise<Offer> => {
@@ -33,7 +33,7 @@ export const createOffer = async (offerData: CreateOfferData): Promise<Offer> =>
 };
 
 export const updateOffer = async (id: string, offerData: Partial<CreateOfferData>): Promise<Offer> => {
-  const response = await api.put<Offer>(`/offers/${id}`, offerData);
+  const response = await api.patch<Offer>(`/offers/${id}`, offerData);
   return response.data;
 };
 

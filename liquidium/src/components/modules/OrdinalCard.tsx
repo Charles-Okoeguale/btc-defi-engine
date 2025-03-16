@@ -18,7 +18,7 @@ const OrdinalCard: FC<OrdinalCardProps> = ({
 
   return (
     <div className={cn(
-      "w-[11.5em] h-[19.9em] bg-[#141414] rounded-[20px] p-4 flex flex-col items-center",
+      "w-[187px] h-[318px] bg-[#141414] rounded-[20px] p-4 flex flex-col items-center",
       className
     )}>
       <div className="relative w-[100px] h-[130px] mb-3 rounded-[100px] overflow-hidden">
@@ -28,6 +28,7 @@ const OrdinalCard: FC<OrdinalCardProps> = ({
             alt={ordinal.inscription_name}
             fill
             className="object-cover"
+            loading='lazy'
           />
         )}
       </div>
@@ -43,7 +44,7 @@ const OrdinalCard: FC<OrdinalCardProps> = ({
 
         <div className="flex gap-2 my-2 justify-center">
           <PriceTag label="Floor" value={`₿${(floorPrice || 0).toFixed(4)}`} />
-          <PriceTag label="Last Sale" value={`₿${(lastSalePrice || 0).toFixed(4)}`} />
+          <PriceTag label="Best" value={`₿${(lastSalePrice || 0).toFixed(4)}`} />
         </div>
 
         <Button 
