@@ -106,7 +106,7 @@ export const EditCustomRequest: FC<CreateOfferModalProps> = ({
                                 <div className="relative w-[80px] sm:w-[100px] h-[60px] sm:h-[70px]">
                                     <div className="absolute inset-0 rounded-[10px] overflow-hidden">
                                         <Image
-                                            src={ordinalData?.ordinal?.renderUrl}
+                                            src={ordinalData?.ordinal?.renderUrl || '/liquid.jpg'}
                                             alt="Profile"
                                             fill
                                             className="object-cover"
@@ -237,7 +237,7 @@ export const EditCustomRequest: FC<CreateOfferModalProps> = ({
                     </div>
 
                     {/* Action buttons */}
-                    <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                    <div className="flex flex-col sm:flex-row justify-between gap-3 mt-4">
                         <Button
                             variant="outline"
                             onClick={() => onOpenChange(false)}

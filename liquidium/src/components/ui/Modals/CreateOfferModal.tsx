@@ -237,7 +237,7 @@ export const CreateOfferModal: FC<CreateOfferModalProps> = ({
                 </div>
 
                 {/* Action buttons */}
-                <div className="flex flex-col sm:flex-row justify-end gap-3 mt-4">
+                <div className="flex flex-col sm:flex-row justify-between gap-3 mt-4">
                     <Button
                         variant="outline"
                         onClick={() => onOpenChange(false)}

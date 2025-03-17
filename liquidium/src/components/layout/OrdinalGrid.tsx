@@ -91,14 +91,18 @@ const OrdinalsGrid: React.FC = () => {
   return (
     <div className='xl:flex xl:flex-col xl:items-center xl:gap-2'>
       <div className="mb-4 relative w-full sm:w-auto">
-        <input
-          type="text"
-          placeholder="Search inscription"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full sm:w-[280px] md:w-[320px] xl:w-[336px] h-[36px] p-2 pr-10 bg-[#111111] border border-[#2B2B2B] rounded-lg text-white text-sm placeholder:text-gray-400"
-        />
-        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+          <div className="relative inline-block w-full sm:w-auto">
+              <input
+                  type="text"
+                  placeholder="Search inscription"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full sm:w-[280px] md:w-[320px] xl:w-[336px] h-[36px] p-2 pr-10 bg-[#111111] border border-[#2B2B2B] rounded-lg text-white text-sm placeholder:text-gray-400"
+              />
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
+                  <Search className="w-4 h-4 text-gray-400" />
+              </div>
+          </div>
       </div>
 
       <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 p-2 border border-[#2B2B2B] w-full rounded-[25px] xl:flex xl:flex-row xl:gap-5 xl:p-3 xl:h-[358px] xl:items-center">

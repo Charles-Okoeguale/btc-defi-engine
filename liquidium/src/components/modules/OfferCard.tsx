@@ -39,11 +39,21 @@ export const OfferListItem: React.FC<OfferListItemProps> = ({
                     />
                 </div>
                 
-                <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 min-w-0">
-                    <span className="text-white text-sm sm:text-md font-medium truncate">
+                <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 min-w-0 max-w-full">
+                    <span className="text-white text-sm sm:text-md font-medium truncate 
+                        max-w-[120px] 
+                        sm:max-w-[100px] 
+                        md:max-w-[150px] 
+                        lg:max-w-[200px]"
+                    >
                         {collectionName}
                     </span>
-                    <span className="text-white text-sm sm:text-md font-medium truncate">
+                    <span className="text-white text-sm sm:text-md font-medium truncate
+                        max-w-[120px] 
+                        sm:max-w-[100px] 
+                        md:max-w-[150px] 
+                        lg:max-w-[200px]"
+                    >
                         {name}
                     </span>
                 </div>
