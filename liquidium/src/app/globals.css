@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @plugin "tailwindcss-animate";
 
@@ -129,5 +132,58 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+[data-dialog-overlay] {
+  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+}
+
+[data-dialog-content] {
+  z-index: 50;
+}
+
+/* Add to your globals.css */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #2B2B2B transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #2B2B2B;
+    border-radius: 3px;
+  }
+}
+
+/* Prevent body scroll when dialog is open */
+body:has(dialog[open]) {
+  overflow: hidden !important;
+  padding-right: 0 !important;
+}
+
+/* Reset any automatic padding adjustments */
+.fixed.inset-0 {
+  padding-right: 0 !important;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+@media (min-width: 768px) {
+  body {
+    padding-right: 0 !important;
   }
 }

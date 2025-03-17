@@ -17,14 +17,14 @@ const PortfolioValueCard: FC<PortfolioValueCardProps> = ({
 
   return (
     <div className={cn(
-      "xl:flex xl:flex-col xl:w-[733.5px] xl:h-[100px] xl:bg-[#141414] xl:py-4 xl:px-4 xl:gap-2 xl:rounded-[20px]",
+      "flex flex-col w-full md:w-[500px] lg:w-[600px] xl:w-[733.5px] h-[80px] xl:h-[100px] bg-[#141414] py-3 xl:py-4 px-3 xl:px-4 gap-1 xl:gap-2 rounded-[20px]",
       className
     )}>
-      <p className="xl:text-white xl:text-xs">{title}</p>
-      <div className="xl:flex xl:flex-row xl:gap-2 xl:items-center">
-        <h1 className="xl:text-white xl:font-bold xl:text-[32px]">₿{formattedBtc}</h1>
-        <div className="xl:text-white xl:border xl:border-[#3E3E3E] xl:rounded-[20px] xl:flex xl:items-center xl:justify-center xl:w-[4.375em] xl:h-[1.625em]">
-          <p className="xl:text-[14px]">${formattedUsd}</p>
+      <p className="text-white text-[10px] sm:text-[11px] xl:text-xs">{title}</p>
+      <div className="flex flex-row gap-2 items-center">
+        <h1 className="text-white font-bold text-[20px] sm:text-[24px] md:text-[28px] xl:text-[32px]">₿{formattedBtc}</h1>
+        <div className="text-white border border-[#3E3E3E] rounded-[20px] flex items-center justify-center w-[3.5em] sm:w-[4em] xl:w-[4.375em] h-[1.4em] sm:h-[1.5em] xl:h-[1.625em]">
+          <p className="text-[11px] sm:text-[12px] xl:text-[14px]">${formattedUsd}</p>
         </div>
       </div>
     </div>

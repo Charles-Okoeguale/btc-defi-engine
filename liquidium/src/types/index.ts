@@ -12,16 +12,16 @@ export interface PriceTagProps {
 }
 
 export interface OfferListItemProps {
-    imageUrl: string;
-    collectionName: string;
-    name: string;
-    id: string;
-    number: string;
-    floorPrice: string;
-    currentPrice: string;
-    onEdit: () => void;
-    onDelete: () => void;
-    className?: string;
+  imageUrl: string;
+  collectionName: string;
+  name: string;
+  id: string;
+  floorPrice: string;
+  currentPrice: string;
+  days: number;
+  interest: number;
+  onEdit: () => void;
+  onDelete: () => void;
 }
 
 export interface GetOffersParams {

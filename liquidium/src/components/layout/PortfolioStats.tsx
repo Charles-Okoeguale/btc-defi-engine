@@ -18,18 +18,18 @@ export default function PortfolioStats() {
   const availableLiquidityUsd = availableLiquidity * BTC_PRICE_USD;
   
   return (
-    <div className="xl:mt-12 xl:flex xl:flex-row xl:gap-2 xl:mb-12">
-      <PortfolioValueCard
-        title="Total portfolio value"
-        btcValue={totalPortfolioValue}
-        usdValue={totalPortfolioValueUsd}
-      />
-      
-      <PortfolioValueCard
-        title="Available liquidity"
-        btcValue={availableLiquidity}
-        usdValue={availableLiquidityUsd}
-      />
+    <div className="mt-12 mb-12 flex flex-col md:flex-row gap-4 lg:gap-2">
+        <PortfolioValueCard
+            title="Total portfolio value"
+            btcValue={totalPortfolioValue}
+            usdValue={totalPortfolioValueUsd}
+        />
+        
+        <PortfolioValueCard
+            title="Available liquidity"
+            btcValue={availableLiquidity}
+            usdValue={availableLiquidityUsd}
+        />
     </div>
   );
 }

@@ -22,8 +22,6 @@ const OrdinalsGrid: React.FC = () => {
   const { data: walletData, isLoading: isLoadingWallet, error: walletError } = 
     useQuery('walletData', getWalletData);
 
-    console.log(walletData, 'wall')
-
   // Fetch collections data for floor prices
   const { data: collectionsData, isLoading: isLoadingCollections } = 
     useQuery('collections', getSupportedCollections);
@@ -92,30 +90,37 @@ const OrdinalsGrid: React.FC = () => {
 
   return (
     <div className='xl:flex xl:flex-col xl:items-center xl:gap-2'>
-      <div className="xl:mb-4 xl:relative">
+      <div className="mb-4 relative w-full sm:w-auto">
         <input
           type="text"
           placeholder="Search inscription"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="xl:w-[336px] xl:h-[36px] xl:p-2 xl:pr-10 xl:bg-[#111111] xl:border xl:border-[#2B2B2B] xl:rounded-lg xl:text-white"
+          className="w-full sm:w-[280px] md:w-[320px] xl:w-[336px] h-[36px] p-2 pr-10 bg-[#111111] border border-[#2B2B2B] rounded-lg text-white text-sm placeholder:text-gray-400"
         />
-        <Search className="xl:absolute xl:right-3 xl:top-1/2 xl:-translate-y-1/2 xl:w-4 xl:h-4 xl:text-gray-400" />
+        <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
       </div>
 
-      <div className="xl:flex xl:flex-row xl:gap-5 xl:p-3 xl:border xl:border-[#2B2B2B] xl:w-full xl:h-[358px] xl:rounded-[25px] xl:items-center">
-        {filteredOrdinals.slice(0, 6).map((ordinal: Ordinal, index: number) => (
-          <div key={index}>
-            <OrdinalCard
-              key={ordinal.inscription_id}
-              ordinal={ordinal}
-              floorPrice={Number((floorPrices[ordinal.slug] || 0).toFixed(4))}
-              onCreateOffer={() => handleCreateOffer(ordinal)}
-            />
-          </div>
-        ))}
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3 p-2 border border-[#2B2B2B] w-full rounded-[25px] xl:flex xl:flex-row xl:gap-5 xl:p-3 xl:h-[358px] xl:items-center">
+          {filteredOrdinals.slice(0, 6).map((ordinal: Ordinal, index: number) => (
+              <div key={index} className="flex justify-center">
+                  <OrdinalCard
+                      key={ordinal.inscription_id}
+                      ordinal={ordinal}
+                      floorPrice={Number((floorPrices[ordinal.slug] || 0).toFixed(4))}
+                      onCreateOffer={() => handleCreateOffer(ordinal)}
+                  />
+              </div>
+          ))}
       </div>
-      <Button className='text-[12px]' onClick={() => setIsBottomSheetOpen(true)}>View all</Button>
+      <div className="flex justify-center w-full mt-2">
+        <Button 
+          className='text-[12px]' 
+          onClick={() => setIsBottomSheetOpen(true)}
+        >
+          View all
+        </Button>
+      </div>
 
       {selectedOrdinal && (
         <CreateOfferModal
